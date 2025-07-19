@@ -73,7 +73,7 @@ export default function DashboardPage() {
 
         {/* Footer */}
         <footer className="text-center text-sm text-gray-600 p-4">
-          © {new Date().getFullYear()} GPT x BRO Dashboard. All rights reserved.
+          © {new Date().getFullYear()} scarly111 Dashboard. All rights reserved.
         </footer>
       </main>
     </ProtectedRoute>
