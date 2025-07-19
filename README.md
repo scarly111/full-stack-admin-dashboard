@@ -24,4 +24,4 @@ It features secure authentication, role-based access control, and a modern, mini
 
 --
 
-Go to app.[https://full-stack-admin-dashboard-navy.vercel.app/]
+[Go to app.](https://full-stack-admin-dashboard-navy.vercel.app/)
