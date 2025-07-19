@@ -1,6 +1,5 @@
 'use client';
-import { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import { createContext, useContext, useEffect, useState } from 'react';
 
 const AuthContext = createContext();
 
@@ -10,9 +9,23 @@ export const AuthProvider = ({ children }) => {
 
   const checkUserLoggedIn = async () => {
     try {
-      const res = await axios.get('/api/user/me');  // backend'de me.js yazacağız
-      setUser(res.data);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setUser(null);
+        return;
+      }
+
+      const res = await fetch('/api/user/me', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data.user);
+      } else {
+        setUser(null);
+      }
     } catch (err) {
+      console.error('Auth check error:', err);
       setUser(null);
     } finally {
       setLoading(false);

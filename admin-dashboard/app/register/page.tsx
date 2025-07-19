@@ -1,38 +1,85 @@
 'use client';
 import Link from 'next/link';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const [form, setForm] = useState({ name: '', email: '', password: '' });
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      console.log('Register response:', data);
+
+      if (res.ok) {
+        alert('Registration successful!');
+        router.push('/login');
+      } else {
+        alert(`Error: ${data.message}`);
+      }
+    } catch (err) {
+      console.error('Register error:', err);
+      alert('An error occurred.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-6">Kayıt Ol</h1>
-        <form className="flex flex-col gap-4">
+    <main className="flex min-h-screen items-center justify-center bg-gray-100">
+      <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-sm">
+        <h2 className="text-2xl font-semibold mb-6 text-center">Register</h2>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
             type="text"
-            placeholder="İsim"
-            className="border p-2 rounded"
+            placeholder="Name"
+            value={form.name}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
+            className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+            required
           />
           <input
             type="email"
             placeholder="Email"
-            className="border p-2 rounded"
+            value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
+            className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+            required
           />
           <input
             type="password"
-            placeholder="Şifre"
-            className="border p-2 rounded"
+            placeholder="Password"
+            value={form.password}
+            onChange={(e) => setForm({ ...form, password: e.target.value })}
+            className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+            required
           />
-          <button className="bg-green-500 text-white py-2 rounded hover:bg-green-600">
-            Kayıt Ol
+          <button
+            type="submit"
+            className={`bg-green-500 text-white rounded-lg py-2 hover:bg-green-600 transition ${
+              loading ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+            disabled={loading}
+          >
+            {loading ? 'Registering...' : 'Register'}
           </button>
         </form>
-        <p className="mt-4 text-sm">
-          Zaten hesabın var mı?{' '}
+        <p className="text-sm mt-4 text-center">
+          Already have an account?{' '}
           <Link href="/login" className="text-green-500 hover:underline">
-            Giriş Yap
+            Login
           </Link>
         </p>
       </div>
-    </div>
+    </main>
   );
 }
